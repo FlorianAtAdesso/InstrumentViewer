@@ -1,0 +1,15 @@
+<p>instrument-list works!</p>
+<div *ngIf="InstrumentsRows.length == 0; else elseBlock">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+</div>
+<ng-template #elseBlock>
+  <div>
+
+    <div class="container">
+      <div  *ngFor="let InstrumentsRow of InstrumentsRows; index as i; first as isFirst">
+
+        <app-instrument-list-row  [Instruments]=InstrumentsRow></app-instrument-list-row>
+      </div>
+      </div>
+    </div>
+</ng-template>

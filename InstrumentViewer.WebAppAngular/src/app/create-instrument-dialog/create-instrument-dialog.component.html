@@ -1,0 +1,12 @@
+<mat-dialog-content class="mat-typography">
+  <h1>Do you want to create the instrument with the following parameters?</h1>
+  <h3>Name:       {{data.Name}}</h3>
+  <h3>Slots:      {{data.Slots}}</h3>
+  <h3>RealseDate: {{data.RealseDate}}</h3>
+  <h3>Price:      {{data.Price}}</h3>
+
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button [mat-dialog-close]="false">Abort</button>
+  <button mat-button [mat-dialog-close]="true" cdkFocusInitial>Create</button>
+</mat-dialog-actions>

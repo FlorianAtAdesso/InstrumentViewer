@@ -35,25 +35,26 @@ namespace InstrumentViewer.API
 
         [FunctionName("GetInstrument")]
         public static async Task<HttpResponseMessage> GetInstrument(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequestMessage req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequestMessage reqMessage, HttpRequest req,
             ILogger log)
         {
             try
             {
-                var body = await req.Content.ReadAsStringAsync();
-                Console.WriteLine(body);
-
-                if (!TryToDeserializeID(body, out ID RequestedId))
+                string id = req.Query["id"];
+                if (string.IsNullOrWhiteSpace(id))
                 {
-                    var errorResponse = req.CreateResponse(System.Net.HttpStatusCode.BadRequest);
-                    errorResponse.Content = new StringContent($"The body was in the wong format, the expected format is: {{ \"Id\": \"The Insteument ID\"}} \r\n the Provied body was : {body}", Encoding.UTF8, "text/plain");
+                    var errorResponse = reqMessage.CreateResponse(System.Net.HttpStatusCode.BadRequest);
+                    errorResponse.Content = new StringContent($"Expected a proprty ID in the query, but there was none", Encoding.UTF8, "text/plain"); 
                     return errorResponse;
                 }
+
+
+                var RequestedId = new ID(id);
 
                 var container = await GetContainerAsync();
                 string json = await ReadInstrumentAsJsonFromContainer(RequestedId, container);
 
-                var response = req.CreateResponse(System.Net.HttpStatusCode.OK);
+                var response = reqMessage.CreateResponse(System.Net.HttpStatusCode.OK);
                 response.Content = new StringContent(json, Encoding.UTF8, "application/json"); ;
                 return response;
 
@@ -62,15 +63,15 @@ namespace InstrumentViewer.API
             {
                 if(e.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
-                    return req.CreateResponse(System.Net.HttpStatusCode.NotFound);
+                    return reqMessage.CreateResponse(System.Net.HttpStatusCode.NotFound);
                 }
                 log.LogError(e.ToString());
-                return req.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
+                return reqMessage.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
             }
             catch (Exception e)
             {
                 log.LogError(e.ToString());
-                return req.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
+                return reqMessage.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
             }
         }
 
@@ -84,6 +85,9 @@ namespace InstrumentViewer.API
                 var container = await GetContainerAsync();
 
                 var Instruments = container.GetItemLinqQueryable<Instrument>(true).ToList();
+                Instruments.AddRange(Instruments);
+                Instruments.AddRange(Instruments);
+
                 var json = JsonSerializer.Serialize(Instruments);
                 var response = req.CreateResponse(System.Net.HttpStatusCode.OK);
                 response.Content = new StringContent(json, Encoding.UTF8, "application/json"); ;

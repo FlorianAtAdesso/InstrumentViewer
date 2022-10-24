@@ -1,0 +1,5 @@
+<div class="row">
+  <div class="col-lg-4 mb-4" *ngFor="let Instrument of Instruments; index as i; first as isFirst">
+    <app-instrument-list-item [Instrument]=Instrument></app-instrument-list-item>
+  </div>
+</div>

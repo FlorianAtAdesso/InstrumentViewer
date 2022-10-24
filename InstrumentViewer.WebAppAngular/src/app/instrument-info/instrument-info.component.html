@@ -1,1 +1,27 @@
-<p>instrument-info works!</p>
+<div *ngIf="Instrument == undefined; else elseBlock">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+</div>
+<ng-template #elseBlock>
+
+  <table class="table">
+    <tbody>
+      <tr>
+        <td>Instrument Name</td>
+        <td>{{Instrument?.Name}}</td>
+      </tr>
+      <tr>
+        <td>Slots</td>
+        <td>{{Instrument?.Slots}}</td>
+      </tr>
+      <tr>
+        <td>RealseDate</td>
+        <td>{{Instrument?.RealseDate}}</td>
+      </tr>
+      <tr>
+        <td>Price</td>
+        <td>{{Instrument?.Price}}</td>
+      </tr>
+    </tbody>
+  </table>
+</ng-template>
+
